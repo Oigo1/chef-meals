@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Meals</title>
+    <link rel="stylesheet" href="{% static 'meals/styles.css' %}">
+</head>
+<body>
+    <h1>Chef Meals</h1>
+
+    
+
+    <!-- Display Meals in Cards -->
+    <div class="meal-container">
+        {% for meal in meals %}
+        <div class="meal-card">
+            <h2>{{ meal.name }}</h2>
+            <p><strong>Ingredients:</strong> {{ meal.ingredients }}</p>
+            <p><strong>Description:</strong> {{ meal.description }}</p>
+
+            <!-- Image Slider -->
+            <div class="slider">
+                <div class="slides">
+                    {% for image in meal.images.all %}
+                    <img src="{{ image.image.url }}" class="slide" onclick="openFullscreen(this)">
+                    {% endfor %}
+                </div>
+                <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
+                <button class="next" onclick="plusSlides(1)">&#10095;</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <!-- Meal Upload Form -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ meal_form.as_p }}
+        <label>Upload Images/Videos (Max 10):</label>
+        <input type="file" name="image" multiple>
+        <button type="submit">Upload Meal</button>
+    </form>
+
+    <hr>
+
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("slide");
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex-1].style.display = "block";
+        }
+
+        function openFullscreen(img) {
+            const image = img.src;
+            const newWindow = window.open(image, '_blank');
+            newWindow.focus();
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
